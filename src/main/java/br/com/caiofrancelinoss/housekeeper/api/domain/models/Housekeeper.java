@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Housekeep {
+public class Housekeeper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
