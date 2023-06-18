@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:root}
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver

@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: ${APP_PROFILE}
+  jpa:
+    hibernate:
+      ddl-auto: validate
