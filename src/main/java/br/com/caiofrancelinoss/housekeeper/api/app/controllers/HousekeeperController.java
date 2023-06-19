@@ -4,7 +4,7 @@ import br.com.caiofrancelinoss.housekeeper.api.app.dto.CreateHousekeeperDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.HousekeeperDetailDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.PartialUpdateHousekeeperDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.UpdateHousekeeperDto;
-import br.com.caiofrancelinoss.housekeeper.api.app.services.HousekeeperService;
+import br.com.caiofrancelinoss.housekeeper.api.domain.services.HousekeeperService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

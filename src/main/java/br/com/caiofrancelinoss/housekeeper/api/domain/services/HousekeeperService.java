@@ -1,4 +1,4 @@
-package br.com.caiofrancelinoss.housekeeper.api.app.services;
+package br.com.caiofrancelinoss.housekeeper.api.domain.services;
 
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.CreateHousekeeperDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.HousekeeperDetailDto;

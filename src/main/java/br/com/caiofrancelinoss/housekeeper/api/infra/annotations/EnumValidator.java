@@ -1,6 +1,5 @@
 package br.com.caiofrancelinoss.housekeeper.api.infra.annotations;
 
-import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.ProfileStatus;
 import br.com.caiofrancelinoss.housekeeper.api.infra.annotations.impl.EnumValidatorImpl;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

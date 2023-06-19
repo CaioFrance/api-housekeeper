@@ -3,7 +3,6 @@ package br.com.caiofrancelinoss.housekeeper.api.app.dto;
 import java.math.BigDecimal;
 
 import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.Gender;
-import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.ProfileStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
