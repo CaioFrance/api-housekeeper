@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS skills (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    skill_level VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP,
+    deleted_at TIMESTAMP
+);
