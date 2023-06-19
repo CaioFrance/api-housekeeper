@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "skill")
 @Table(name = "skills")
@@ -26,6 +28,9 @@ public class Skill {
     
     @Enumerated(EnumType.STRING)
     private SkillStatus status;
+    
+    @ManyToMany(mappedBy = "skills")
+    private Set<Housekeeper> housekeepers = new HashSet<>();
 
     @CreationTimestamp
     @CreatedDate

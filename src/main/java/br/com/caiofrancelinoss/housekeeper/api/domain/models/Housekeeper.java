@@ -2,6 +2,8 @@ package br.com.caiofrancelinoss.housekeeper.api.domain.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.CreateHousekeeperDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.PartialUpdateHousekeeperDto;
@@ -41,6 +43,14 @@ public class Housekeeper {
     
     @Embedded
     private Address address;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "housekeepers_skills",
+        joinColumns = @JoinColumn(name = "housekeeper_id"),
+        inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private Set<Skill> skills = new HashSet<>();
     
     @CreationTimestamp
     @CreatedDate
