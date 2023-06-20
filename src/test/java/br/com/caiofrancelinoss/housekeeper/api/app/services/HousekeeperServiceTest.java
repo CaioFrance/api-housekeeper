@@ -1,38 +1,49 @@
 package br.com.caiofrancelinoss.housekeeper.api.app.services;
 
+import br.com.caiofrancelinoss.housekeeper.api.ApiHousekeeperApplication;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.AddressDataDto;
 import br.com.caiofrancelinoss.housekeeper.api.app.dto.CreateHousekeeperDto;
-import br.com.caiofrancelinoss.housekeeper.api.domain.models.Address;
-import br.com.caiofrancelinoss.housekeeper.api.domain.models.Housekeeper;
+import br.com.caiofrancelinoss.housekeeper.api.app.dto.HousekeeperDetailDto;
 import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.Gender;
 import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.ProfileStatus;
-import br.com.caiofrancelinoss.housekeeper.api.domain.repositories.HousekeeperRepository;
+import br.com.caiofrancelinoss.housekeeper.api.domain.services.HousekeeperService;
+
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.random.RandomGenerator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(
+    classes = ApiHousekeeperApplication.class,
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+@ActiveProfiles("test")
+@Transactional
 class HousekeeperServiceTest {
+    @Autowired
+    private HousekeeperService service;
 
-    @Mock
-    private HousekeeperRepository housekeeperRepository;
+    @Autowired
+    private TestRestTemplate restTemplate;
     
     @BeforeEach
-    public void beforeEach() {
-        MockitoAnnotations.openMocks(this);
+    public void beforeEach(@Autowired Flyway flyway) {
+        flyway.clean();
+        flyway.migrate();
     }
-
+    
     @Test
-    void shouldReturnSaveAHousekeeperWhenPassedValidParams() {
+    void createNewHousekeeperSuccess() {
         var addressDto =new AddressDataDto(
             "street", 
             "neighborhood", 
@@ -41,99 +52,63 @@ class HousekeeperServiceTest {
             "state",
             "", 
             "number");
-        
         var createHousekeeperDto = new CreateHousekeeperDto(
-            "Test ",
+            "Ana",
             "(92)99999-9999",
             "",
-            "test@email",
+            "ana@email",
             randomNumber(20, 50),
             "",
             new BigDecimal("0.50"),
             addressDto,
             Gender.FEMALE
         );
-        var housekeeper = new Housekeeper(createHousekeeperDto);
         
-        Mockito.when(housekeeperRepository.saveAndFlush(housekeeper))
-            .thenReturn(housekeeperFake(1L, createHousekeeperDto));
+        var createdResponse = restTemplate
+            .postForEntity("/housekeepers/create", createHousekeeperDto, HousekeeperDetailDto.class);
         
-        var newHousekeeper = housekeeperRepository.saveAndFlush(housekeeper);
+        var responseBody = createdResponse.getBody();
         
-        Mockito.verify(housekeeperRepository).saveAndFlush(housekeeper);
-        
-        assertNotNull(newHousekeeper);
-        assertEquals(1L, newHousekeeper.getId());
-        assertEquals(Housekeeper.class, newHousekeeper.getClass());
+        assertEquals(HttpStatus.CREATED, createdResponse.getStatusCode());
+        assertNotNull(responseBody);
+        assertEquals(createHousekeeperDto.name(), responseBody.name());
+        assertEquals(1L, responseBody.id());
+        assertEquals(ProfileStatus.AVAILABLE, responseBody.status());
+        assertNotNull(responseBody.address());
     }
     
     @Test
-    void shouldReturnAHousekeeperWhenPassedId() {
-        var searchId = 1L;
-        
-        Mockito.when(housekeeperRepository.getReferenceById(searchId))
-            .thenReturn(housekeeperFake(searchId, ProfileStatus.AVAILABLE, LocalDateTime.now(), LocalDateTime.now(), null));
-        
-        var housekeeper = housekeeperRepository.getReferenceById(searchId);
-        
-        Mockito.verify(housekeeperRepository).getReferenceById(searchId);
-        
-        assertNotNull(housekeeper);
-        assertEquals(searchId, housekeeper.getId());
-        assertEquals(ProfileStatus.AVAILABLE, housekeeper.getStatus());
-    }
-    
-    private Housekeeper housekeeperFake(long id, ProfileStatus profileStatus, LocalDateTime createdAt,
-                                        LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        var randomAge = randomNumber(18, 60);
-        
-        var address = new Address(
-            "street", 
+    void showHousekeeperById() {
+        var addressDto =new AddressDataDto(
+            "street",
             "neighborhood",
             "zipcode",
             "city",
             "state",
-            "complement",
-            "number"
-        );
-        
-        return new Housekeeper(
-            id,
-            "Test",
-            "(99)9999-9999",
             "",
-            "test@email",
-            randomAge,
+            "number");
+        var createHousekeeperDto = new CreateHousekeeperDto(
+            "Ana",
+            "(92)99999-9999",
+            "",
+            "ana@email",
+            randomNumber(18, 60),
             "",
             new BigDecimal("0.50"),
-            profileStatus,
-            Gender.MALE,
-            address,
-            new HashSet<>(),
-            createdAt,
-            updatedAt,
-            deletedAt
+            addressDto,
+            Gender.FEMALE
         );
-    }
-    
-    private Housekeeper housekeeperFake(long id, CreateHousekeeperDto createHousekeeperDto) {
-        return new Housekeeper(
-            id,
-            createHousekeeperDto.name(),
-            createHousekeeperDto.cellphone(),
-            createHousekeeperDto.telephone(),
-            createHousekeeperDto.email(),
-            createHousekeeperDto.age(),
-            createHousekeeperDto.experience(),
-            createHousekeeperDto.pricePerHour(),
-            ProfileStatus.AVAILABLE,
-            createHousekeeperDto.gender(),
-            new Address(createHousekeeperDto.address()),
-            new HashSet<>(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            null
-        );
+        var searchId = 1L;
+        
+        service.createAHousekeeper(createHousekeeperDto);
+        
+        var housekeeper = service.findAHousekeeperById(searchId);
+        
+        assertEquals("Ana", housekeeper.getName());
+        assertEquals(searchId, housekeeper.getId());
+        assertNotNull(housekeeper.getAddress());
+        assertNotNull(housekeeper.getCreatedAt());
+        assertNotNull(housekeeper.getUpdatedAt());
     }
     
     private int randomNumber(int min, int max) {
