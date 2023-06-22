@@ -7,6 +7,8 @@ import br.com.caiofrancelinoss.housekeeper.api.app.dto.UpdateHousekeeperDto;
 import br.com.caiofrancelinoss.housekeeper.api.domain.models.Housekeeper;
 import br.com.caiofrancelinoss.housekeeper.api.domain.models.enums.ProfileStatus;
 import br.com.caiofrancelinoss.housekeeper.api.domain.repositories.HousekeeperRepository;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,14 @@ public class HousekeeperService {
     public Housekeeper createAHousekeeper(CreateHousekeeperDto createHousekeeperDto) {
         var housekeeper = new Housekeeper(createHousekeeperDto);
         
-        housekeeperRepository.saveAndFlush(housekeeper);
+        housekeeperRepository.save(housekeeper);
         
         return housekeeper;
     }
     
     public Housekeeper findAHousekeeperById(Long id) {
-        return housekeeperRepository.getReferenceById(id);
+        return housekeeperRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Housekeeper not found with id: " + id));
     }
     
     public Page<HousekeeperDetailDto> getAllHousekeeperPerPage(Pageable pageable) {
